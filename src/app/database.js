@@ -410,7 +410,6 @@ var Database = {
                 }
 
                 App.vent.trigger('initHttpApi');
-                App.vent.trigger('db:ready');
 
                 /*return AdvSettings.checkApiEndpoints([
                     Settings.updateEndpoint

@@ -89,25 +89,36 @@
             });
         },
 
+        seek: function (seconds) {
+            win.info('Chromecast: seek %s', seconds);
+            this.get('device').seek(seconds, function (err, status) {
+                if (err) {
+                    win.error('Chromecast.seek:Error', err);
+                }
+            });
+        },
+
+        seekTo: function (newCurrentTime) {
+            win.info('Chromecast: seek to %ss', newCurrentTime);
+            this.get('device').seek(newCurrentTime, function (err, status) {
+                if (err) {
+                    win.error('Chromecast.seekTo:Error', err);
+                }
+            });
+        },
+
         seekPercentage: function (percentage) {
-           win.info('Chromecast: seek percentage %s%', percentage.toFixed(2));
-           var newCurrentTime = this.get('loadedMedia').duration / 100 * percentage;
-           this.get('device').seek(newCurrentTime, function (err, status) {
-               if (err) {
-                   win.error('Chromecast.seek error:', err);
-               } else {
-                   win.debug('Chromecast, seeked to', newCurrentTime);
-               }
-           });
-       },
+            win.info('Chromecast: seek percentage %s%', percentage.toFixed(2));
+            var newCurrentTime = this.get('loadedMedia').duration / 100 * percentage;
+            this.seekTo(newCurrentTime.toFixed());
+        },
 
         forward: function () {
-          console.log(this.get('loadedmedia'));
-            this.get('device').seek(this.get('loadedmedia').currentTime +30);
+            this.seek(30);
         },
 
         backward: function () {
-            this.get('device').seek(this.get('loadedmedia').currentTime +30);
+            this.seek(-30);
         },
 
         unpause: function () {
@@ -130,7 +141,7 @@
             }
             // If this is the active device, propagate the status event.
             if (collection.selected.id === this.id) {
-
+  
                 App.vent.trigger('device:status', status);
             }
         }

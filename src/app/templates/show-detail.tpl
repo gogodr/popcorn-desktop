@@ -12,14 +12,14 @@
             <div class="shm-title"><%= title %></div>
             <div class="shm-infos">
                 <div class="shmi-year"><%= year %></div>
-                    <span class="dot"></span>
-                <div class="shmi-runtime"><%= runtime %> min</div>
-                    <span class="dot"></span>
-                <div class="shmi-status"><%= status !== undefined ? i18n.__(status.capitalizeEach()) : i18n.__("N/A") %></div>
+                    <!--span class="dot"></span-->
+                <!--div class="shmi-runtime"><%= runtime %> min</div>
+                    <span class="dot"></span-->
+                <!--div class="shmi-status"><%= status !== undefined ? i18n.__(status.capitalizeEach()) : i18n.__("N/A") %></div-->
                     <span class="dot"></span>
                 <div class="shmi-genre"><%= genres.length > 0 && genres[0] !== undefined ? i18n.__(genres[0]) : i18n.__("N/A") %></div>
-                    <span class="dot"></span>
-                <div class="shmi-imdb" data-toggle="tooltip" data-placement="top" title="<%=i18n.__("Open IMDb page") %>"></div>
+                    <!--span class="dot"></span-->
+                <!--div class="shmi-imdb" data-toggle="tooltip" data-placement="top" title="<%=i18n.__("Open IMDb page") %>"></div>
                     <span class="dot"></span>
                 <div class="shmi-rating">
                     <% p_rating = Math.round(rating.percentage) / 20;%>
@@ -38,14 +38,14 @@
                         <% }; %>
                     </div>
                     <div class="number-container-tv hidden"><%= Math.round(rating.percentage) / 10 %><em>/10</em></div>
-                </div>
+                </div-->
             </div>
             <div class="shm-synopsis"><%= synopsis %></div>
         </div>
-        <div class="sh-actions">
+        <!--div class="sh-actions">
             <div class="sha-bookmark"><%=i18n.__("Add to bookmarks") %></div>
             <div class="sha-watched"><%=i18n.__("Mark as Seen") %></div>
-        </div>
+        </div-->
     </section>
 
     <section class="show-details">
@@ -116,12 +116,12 @@
                 <div class="sdoi-title"></div>
                 <div class="sdoi-links">
                     <div data-toggle="tooltip" data-placement="left" title="<%=i18n.__("Magnet link") %>" class="fa fa-magnet magnet-icon"></div>
-                    <div data-toggle="tooltip" data-placement="left" title="<%=i18n.__("Health Unknown") %>" class="fa fa-circle health-icon None"></div>
+                    <!--div data-toggle="tooltip" data-placement="left" title="<%=i18n.__("Health Unknown") %>" class="fa fa-circle health-icon None"></div-->
                 </div>
-                <div class="sdoi-aired">
+                <!--div class="sdoi-aired">
                     <div class="sdoi-number"></div>
                     <div class="sdoi-date"></div>
-                </div>
+                </div-->
                 <div class="sdoi-synopsis"></div>
             </div>
             <div class="sdo-watch">

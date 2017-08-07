@@ -6,7 +6,7 @@
 <img class="cover-image" src="images/posterholder.png">
 <div class="cover">
     <div class="cover-overlay">
-        <i class="fa fa-heart actions-favorites tooltipped" data-toggle="tooltip" data-placement="auto bottom" data-delay='{ "show": "800", "hide": "100" }'></i>
+        <!--i class="fa fa-heart actions-favorites tooltipped" data-toggle="tooltip" data-placement="auto bottom" data-delay='{ "show": "800", "hide": "100" }'></i-->
         <i class="fa fa-eye actions-watched tooltipped" data-toggle="tooltip" data-placement="auto bottom" data-delay='{ "show": "800", "hide": "100" }'></i>
 
         <% if(typeof rating !== 'undefined'){
@@ -34,8 +34,8 @@
 
 <p class="title" title="<%= title %>"><%= title %></p>
 <p class="year">
-    <% if (typeof year !== 'undefined') {%>
-        <%= year %>
+    <% if (typeof episode !== 'undefined') {%>
+        Episode - <%= episode %>
     <%} %>
 </p>
 

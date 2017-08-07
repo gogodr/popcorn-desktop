@@ -202,17 +202,28 @@
 
         getTabTypes: function () {
             return _.sortBy(_.filter(_.map(Settings.providers, function (p, t) {
+                var auxTitle = "";
+                var auxTt = "";
+                switch (p.name) {
+                    case "Movies":
+                        auxTitle = "Releases";
+                        auxTt = "Episodes By Release"
+                        break;
+                    case "Anime":
+                        auxTitle = "Season";
+                        auxTt = "All the Animes of this Season"
+                        break;
+                }
                 return {
-                    name: p.name,
+                    name: auxTitle,
                     order: p.order || 1,
-                    type: t
+                    type: t,
+                    tooltip:auxTt
                 };
             }), function (p) {
-                if ((p.name === 'Anime' && Settings.animeTabDisable) || (p.name === 'Indie' && Settings.indieTabDisable)) {
-                    return false;
-                }
-
-                return p.name;
+                console.log('Tab', p.name)
+                //return p.name ? true : false
+                return (p.name == 'Releases' || p.name == 'Season') ? true : false;
             }), 'order');
         },
 

@@ -12,8 +12,9 @@ vjs.Player.prototype.debugMouse_ = false;
 vjs.Player.prototype.reportUserActivity = function (event) {
     /** DEBUG MOUSE CTRL+D **/
     if (this.debugMouse_) {
-        console.log('Event fired at: ' + vjs.formatTime(this.player_.currentTime(), this.player_.duration()));
-        console.log(event);
+        win.debug('');
+        win.debug('Event fired at: ' + vjs.formatTime(this.player_.currentTime(), this.player_.duration()));
+        win.debug(event);
     }
     if (event !== undefined && event.type === 'mousemove') {
         if (event.webkitMovementX === 0 && event.webkitMovementY === 0) {
@@ -115,7 +116,7 @@ vjs.TextTrack.prototype.load = function () {
                     if (!error) {
                         callback(data);
                     } else {
-                        console.warn('Failed to read subtitle!', error);
+                        win.warn('Failed to read subtitle!', error);
                     }
                 });
                 // Fetches Remotely
@@ -127,7 +128,7 @@ vjs.TextTrack.prototype.load = function () {
                     if (!error && response.statusCode === 200) {
                         callback(data);
                     } else {
-                        console.warn('Failed to download subtitle!', error, response);
+                        win.warn('Failed to download subtitle!', error, response);
                     }
                 });
             }
@@ -151,7 +152,7 @@ vjs.TextTrack.prototype.load = function () {
                 dialog, begin_time, end_time;
 
             fs.writeFileSync(path.join(srtPath, srt), ''); //create or delete content;
-            console.log('SUB format can be converted:', orig);
+            win.debug('SUB format can be converted:', orig);
 
             var rl = readline.createInterface({
                 input: fs.createReadStream(path.join(origPath, orig)),
@@ -190,7 +191,7 @@ vjs.TextTrack.prototype.load = function () {
                         }
 
                         if (dialog && begin_time && end_time) {
-                            console.log('SUB formatted in \'ssa\'');
+                            win.debug('SUB formatted in \'ssa\'');
                         }
                         return; //we have the elms spots, move on to the next line
                     }
@@ -207,7 +208,7 @@ vjs.TextTrack.prototype.load = function () {
                     parsedDialog = parsedDialog.replace('{\\i1}', '<i>').replace('{\\i0}', '</i>'); //italics
                     parsedDialog = parsedDialog.replace('{\\b1}', '<b>').replace('{\\b0}', '</b>'); //bold
                     parsedDialog = parsedDialog.replace('\\N', '\n'); //return to line
-                    parsedDialog = parsedDialog.replace(/{.*?}/g, ''); //remove leftovers brackets 
+                    parsedDialog = parsedDialog.replace(/{.*?}/g, ''); //remove leftovers brackets
                 }
 
                 //parse TXT
@@ -232,7 +233,7 @@ vjs.TextTrack.prototype.load = function () {
                 if (parsedBeginTime < lastBeginTime) {
                     counter = 1;
                     fs.writeFileSync(path.join(srtPath, srt), '');
-                    console.log('SUB contains multiple tracks, keeping only the last');
+                    win.debug('SUB contains multiple tracks, keeping only the last');
                 }
 
                 //SRT formatting
@@ -248,10 +249,10 @@ vjs.TextTrack.prototype.load = function () {
             setTimeout(function () {
                 fs.readFile(path.join(srtPath, srt), function (err, dataBuff) {
                     if (!err) {
-                        console.log('SUB transcoded to SRT:', srt);
+                        win.debug('SUB transcoded to SRT:', srt);
                         callback(dataBuff);
                     } else {
-                        console.warn('SUB transcoding failed', err);
+                        win.warn('SUB transcoding failed', err);
                     }
                 });
             }, 2000);
@@ -270,7 +271,7 @@ vjs.TextTrack.prototype.load = function () {
                     }
                 });
             } catch (error) {
-                console.warn('Failed to decompress subtitle!', error);
+                win.warn('Failed to decompress subtitle!', error);
             }
         };
 
@@ -284,14 +285,12 @@ vjs.TextTrack.prototype.load = function () {
                     .replace(/(- |==|sync).*[\s\S].*[\s\S].*[\s\S].*[\s\S].*\.(com|org|net|edu)/ig, '') // various teams
                     .replace(/[^0-9][\s\S][^0-9\W].*[\s\S].*[\s\S].*opensubtitles.*/ig, ''); // opensubs "contact us" ads
 
-                strings = Common.sanitize(strings); // xss-style attacks
-                strings = strings.replace(/--\&gt\;/g, '-->'); // restore srt format
                 callback(strings);
             };
 
             var charset = charsetDetect.detect(dataBuff);
             var detectedEncoding = charset.encoding;
-            console.log('SUB charset detected: ' + detectedEncoding);
+            win.debug('SUB charset detected: ' + detectedEncoding);
             // Do we need decoding?
             if (detectedEncoding && detectedEncoding.toLowerCase().replace('-', '') === targetEncodingCharset) {
                 parse(dataBuff.toString('utf-8'));
@@ -299,10 +298,10 @@ vjs.TextTrack.prototype.load = function () {
             } else {
                 if (!language && Settings.subtitle_language !== 'none') {
                     language = Settings.subtitle_language;
-                    console.log('SUB charset: using subtitles_language setting (' + language + ') as default');
+                    win.debug('SUB charset: using subtitles_language setting (' + language + ') as default');
                 }
                 var langInfo = App.Localization.langcodes[language] || {};
-                console.log('SUB charset expected:', langInfo.encoding);
+                win.debug('SUB charset expected:', langInfo.encoding);
                 if (langInfo.encoding !== undefined && langInfo.encoding.indexOf(detectedEncoding) < 0) {
                     // The detected encoding was unexepected to the language, so we'll use the most common
                     // encoding for that language instead.
@@ -310,11 +309,11 @@ vjs.TextTrack.prototype.load = function () {
                     dataBuff = iconv.encode(iconv.decode(dataBuff, detectedEncoding), targetEncodingCharset);
                 } else {
                     // fallback to utf8
-                    console.log('SUB charset: fallback to utf-8');
+                    win.debug('SUB charset: fallback to utf-8');
                     dataBuff = iconv.decode(dataBuff, detectedEncoding);
                     detectedEncoding = 'UTF-8';
                 }
-                console.log('SUB charset used:', detectedEncoding);
+                win.debug('SUB charset used:', detectedEncoding);
                 parse(dataBuff.toString('utf-8'));
             }
         };
@@ -323,7 +322,7 @@ vjs.TextTrack.prototype.load = function () {
             try {
                 this_.parseCues(data);
             } catch (e) {
-                console.error('Error reading subtitles timing, file seems corrupted', e);
+                win.error('Error reading subtitles timing, file seems corrupted', e);
                 subsParams();
                 App.vent.trigger('notification:show', new App.Model.Notification({
                     title: i18n.__('Error reading subtitle timings, file seems corrupted'),
@@ -336,7 +335,7 @@ vjs.TextTrack.prototype.load = function () {
         };
 
         this.on('loaded', function () {
-            console.log('Subtitles loaded!');
+            win.info('Subtitles loaded!');
             subsParams();
         });
 
@@ -376,7 +375,7 @@ vjs.TextTrackMenuItem = vjs.MenuItem.extend({
 
         this.player_.on(track.kind() + 'trackchange', vjs.bind(this, this.update));
 
-        // Popcorn Time Fix 
+        // Popcorn Time Fix
         // Allowing us to send a default language
         if (track.dflt()) {
             this.player_.showTextTrack(this.track.id_, this.track.kind());

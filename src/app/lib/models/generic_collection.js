@@ -5,6 +5,8 @@
         var deferred = Q.defer();
 
         var torrentsPromise = torrentProvider.fetch(self.filter);
+
+        console.log('torrentsPromise', torrentsPromise);
         var idsPromise = torrentsPromise.then(_.bind(torrentProvider.extractIds, torrentProvider));
         var promises = [
             torrentsPromise,
@@ -16,12 +18,12 @@
             }) : true
         ];
 
-        win.debug('pre all', promises);
+        console.log('pre all', promises);
 
         Q.all(promises)
             .spread(function (torrents, subtitles, metadatas) {
 
-                win.debug('post all', torrents, subtitles, metadatas);
+                console.log('post all', torrents, subtitles, metadatas);
 
                 // If a new request was started...
                 metadatas = _.map(metadatas, function (m) {
@@ -104,7 +106,7 @@
                 var subtitle; //TODO: var subtitle = App.Providers.get('ysubs');
                 var metadata = this.providers.metadata;
                 var torrents = this.providers.torrents;
-
+                console.log("providers", this.providers);
                 /* XXX(xaiki): provider hack
                  *
                  * we actually do this to 'save' the provider number,
@@ -113,18 +115,96 @@
                  * provider declare a unique id, and then lookthem up in
                  * a hash.
                  */
-                win.debug('pre---', subtitle, metadata, torrents);
+                console.log('pre---', subtitle, metadata, torrents);
 
                 var torrentPromises = _.map(torrents, function (torrentProvider) {
-                    return getDataFromProvider(torrentProvider, subtitle, metadata, self)
-                        .then(function (torrents) {
-                            self.add(torrents.results);
-                            self.hasMore = true;
-                            self.trigger('sync', self);
-                        })
-                        .catch(function (err) {
-                            console.error('provider error err', err);
-                        });
+                    var providerName = torrentProvider.name.split('?')[0];
+                    if (providerName == "AnimeApi") {
+
+                    }
+                    switch (providerName) {
+                        case "AnimeApi":
+                            return new Promise((resolve, reject) => {
+                                resolve([{
+                                    _id: "centaur-no-nayami",
+                                    images: {
+                                        banner: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                        fanart: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                        poster: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg"
+                                    },
+                                    provider: "horriblesubsApi",
+                                    slug: 'centaur-no-nayami',
+                                    title: "Centaur no Nayami",
+                                    genres: ["Slice of Life", "Comedy"],
+                                    description: "Himeno is a sweet, shy little centaur girl. In her world, everyone seems to be a supernatural creature, and all her classmates have some kind of horns, wings, tails, halos, or other visible supernatural body part. Despite their supernatural elements, Himeno and her best friends, Nozomi and Kyouko, have a fun and mostly normal daily school life!",
+                                    type: "show",
+                                    year: "2017"
+                                }]);
+                            }).then((torrents) => {
+                                console.log("Trigger get anime");
+                                self.add(torrents);
+                                self.hasMore = false;
+                                self.trigger('sync', self);
+                            }).catch(function (err) {
+                                console.error('provider error err', err);
+                            });;
+                        case "MovieApi":
+                            return new Promise((resolve, reject) => {
+                                resolve([{
+                                    backdrop: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                    cover: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                    certification: "R",
+                                    images: {
+                                        banner: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                        fanart: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                        poster: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg"
+                                    },
+                                    provider: "horriblesubsApi",
+                                    slug: 'centaur-no-nayami-1',
+                                    title: "Centaur no Nayami",
+                                    genre: ["Slice of Life", "Comedy"],
+                                    description: "Himeno is a sweet, shy little centaur girl. In her world, everyone seems to be a supernatural creature, and all her classmates have some kind of horns, wings, tails, halos, or other visible supernatural body part. Despite their supernatural elements, Himeno and her best friends, Nozomi and Kyouko, have a fun and mostly normal daily school life!",
+                                    type: "movie",
+                                    year: "2017",
+                                    episode: 1,
+                                    torrents: {
+                                        "720p": {
+                                            peers: 0,
+                                            seeds: 0,
+                                            provider: "HorribleSubs",
+                                            url: "magnet:?xt=urn:btih:LCNTKNASRF3IVRQF2CRXKLAMMQYL7RJR&tr=http://nyaa.tracker.wf:7777/announce&tr=udp://tracker.coppersurfer.tk:6969/announce&tr=udp://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.leechers-paradise.org:6969/announce&tr=http://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.opentrackr.org:1337/announce&tr=http://tracker.opentrackr.org:1337/announce&tr=udp://tracker.zer0day.to:1337/announce&tr=http://explodie.org:6969/announce&tr=http://p4p.arenabg.com:1337/announce&tr=udp://p4p.arenabg.com:1337/announce&tr=http://mgtracker.org:6969/announce&tr=udp://mgtracker.org:6969/announce"
+                                        },
+                                        "1080p": {
+                                            peers: 0,
+                                            seeds: 0,
+                                            provider: "HorribleSubs",
+                                            url: "magnet:?xt=urn:btih:BKXDCPINBFWD3TIKMJFYS3T63TDMZLDJ&tr=http://nyaa.tracker.wf:7777/announce&tr=udp://tracker.coppersurfer.tk:6969/announce&tr=udp://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.leechers-paradise.org:6969/announce&tr=http://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.opentrackr.org:1337/announce&tr=http://tracker.opentrackr.org:1337/announce&tr=udp://tracker.zer0day.to:1337/announce&tr=http://explodie.org:6969/announce&tr=http://p4p.arenabg.com:1337/announce&tr=udp://p4p.arenabg.com:1337/announce&tr=http://mgtracker.org:6969/announce&tr=udp://mgtracker.org:6969/announce"
+                                        }
+                                    }
+                                }]);
+                            }).then((torrents) => {
+                                console.log("Trigger get anime");
+                                self.add(torrents);
+                                self.hasMore = false;
+                                self.trigger('sync', self);
+                            }).catch(function (err) {
+                                console.error('provider error err', err);
+                            });;
+                    }
+
+                    if (providerName != 'AnimeApi') {
+                        return getDataFromProvider(torrentProvider, subtitle, metadata, self)
+                            .then(function (torrents) {
+                                console.log("gotten torrents", torrents.results)
+                                self.add(torrents.results);
+                                self.hasMore = true;
+                                self.trigger('sync', self);
+                            })
+                            .catch(function (err) {
+                                console.error('provider error err', err);
+                            });
+                    } else {
+                    }
                 });
 
                 Q.all(torrentPromises).done(function (torrents) {

@@ -1,12 +1,12 @@
 /** Default settings **/
 var Settings = {
-    projectName: 'Popcorn-Time',
+    projectName: 'Butter',
     projectUrl: 'http://butterproject.org',
     projectTwitter: 'butterproject',
     projectFacebook: 'ButterProjectOrg',
     projectGooglePlus: 'ButterProject',
     projectBlog: 'http://blog.butterproject.org/',
-    projectForum: 'https://www.reddit.com/r/ButterProject',
+    projectForum: 'http://discuss.butterproject.org/',
 
     statusUrl: 'https://status.butterproject.org',
     changelogUrl: 'https://github.com/butterproject/butter-desktop/commits/master',
@@ -24,27 +24,7 @@ var Settings = {
         'JgeCrPkH6GBa9azUsZ+3MA98b46yhWO2QuRwmFQwPiME+Brim3tHlSuXbL1e5qKf\n' +
         'GOm3OxA3zKXG4cjy6TyEKajYlT45Q+tgt1L1HuGAJjWFRSA0PP9ctC6nH+2N3HmW\n' +
         'RTcms0CPio56gg==\n' +
-        '-----END PUBLIC KEY-----\n',
-    opensubtitles: {
-        useragent: 'Butter'
-    },
-    trakttv: {
-        client_id: '647c69e4ed1ad13393bf6edd9d8f9fb6fe9faf405b44320a6b71ab960b4540a2',
-        client_secret: 'f55b0a53c63af683588b47f6de94226b7572a6f83f40bd44c58a7c83fe1f2cb1'
-    },
-    tvshowtime: {
-        client_id: 'iM2Vxlwr93imH7nwrTEZ',
-        client_secret: 'ghmK6ueMJjQLHBwsaao1tw3HUF7JVp_GQTwDwhCn'
-    },
-    fanart: {
-        api_key: '8104b601679c3ec23e7d3e4d93ddb46f'
-    },
-    tvdb: {
-        api_key: '80A769280C71D83B'
-    },
-    tmdb: {
-        api_key: '1a83b1ecd56e3ac0e509b553b68c77a9'
-    }
+        '-----END PUBLIC KEY-----\n'
 };
 
 Settings.providers = {
@@ -52,7 +32,7 @@ Settings.providers = {
         order: 1,
         name: 'Movies',
         uri: ['vodo', 'archive',
-          //'stremio?auth={"url":"http://api8.herokuapp.com","key":"423f59935153f2f5d2db0f6c9b812592b61b3737"}&url=http://localhost:9005'
+            //'stremio?auth={"url":"http://api8.herokuapp.com","key":"423f59935153f2f5d2db0f6c9b812592b61b3737"}&url=http://localhost:9005'
         ]
     },
     tvshow: {
@@ -91,10 +71,7 @@ Settings.trackers = {
         'udp://tracker.coppersurfer.tk:6969/announce',
         'udp://glotorrents.pw:6969/announce',
         'udp://exodus.desync.com:6969/announce',
-        'udp://tracker.opentrackr.org:1337/announce',
-        'udp://9.rarbg.com:2710/announce',
-        'udp://tracker.openbittorrent.com:80',
-        'udp://tracker.publicbt.com:80/announce'
+        'udp://tracker.opentrackr.org:1337/announce'
     ]
 };
 
@@ -146,9 +123,12 @@ Settings.httpApiUsername = 'butter';
 Settings.httpApiPassword = 'butter';
 
 // Trakt.tv
-Settings.traktStatus = false;
-Settings.traktLastSync = false;
-Settings.traktLastActivities = false;
+Settings.traktToken = '';
+Settings.traktTokenRefresh = '';
+Settings.traktTokenTTL = '';
+Settings.traktTvVersion = '0.0.2';
+Settings.traktLastSync = '';
+Settings.traktLastActivities = '';
 Settings.traktSyncOnStart = true;
 Settings.traktPlayback = true;
 
@@ -162,7 +142,8 @@ Settings.opensubtitlesUsername = '';
 Settings.opensubtitlesPassword = '';
 
 // Advanced options
-Settings.connectionLimit = 55;
+Settings.connectionLimit = 100;
+Settings.dhtLimit = 500;
 Settings.streamPort = 0; // 0 = Random
 Settings.tmpLocation = path.join(os.tmpDir(), Settings.projectName);
 Settings.databaseLocation = path.join(data_path, 'data');
@@ -176,7 +157,7 @@ Settings.bigPicture = false;
 Settings.activateTorrentCollection = true;
 Settings.activateWatchlist = true;
 Settings.activateRandomize = true;
-Settings.onlineSearchEngine = 'ExtraTorrent';
+Settings.onlineSearchEngine = 'KAT';
 
 // Ratio
 Settings.totalDownloaded = 0;

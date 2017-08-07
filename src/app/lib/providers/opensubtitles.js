@@ -5,11 +5,9 @@
 
     var OpenSubtitles = function () {
         openSRT = new OS({
-            
-            useragent: 'Popcorn Time NodeJS',
+            useragent: 'Popcorn Time NodeJS', 
             username: Settings.opensubtitlesUsername,
-            password: Settings.opensubtitlesPassword,
-            ssl: true
+            password: Settings.opensubtitlesPassword
         });
     };
 

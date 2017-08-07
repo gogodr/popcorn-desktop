@@ -464,107 +464,88 @@ var handleVideoFile = function (file) {
         App.PlayerView.closePlayer();
     } catch (err) {}
 
-    return new Promise(function (resolve, reject) {
+    // init our objects
+    var playObj = {
+        src: 'file://' + path.join(file.path),
+        type: 'video/mp4'
+    };
+    var sub_data = {
+        filename: path.basename(file.path),
+        path: file.path
+    };
 
-        // init our objects
-        var playObj = {
-            src: 'file://' + path.join(file.path),
-            type: 'video/mp4'
-        };
-        var sub_data = {
-            filename: path.basename(file.path),
-            path: file.path
-        };
-
-        App.Trakt.client.matcher.match({
-            path: file.path
-        }).then(function (res) {
-            return App.Trakt.client.images.get(res[res.type]).then(function (img) {
-                switch (res.quality) {
-                    case 'SD':
-                        res.quality = '480p';
-                        break;
-                    case 'HD':
-                        res.quality = '720p';
-                        break;
-                    case 'FHD':
-                        res.quality = '1080p';
-                        break;
-                    default:
-                }
-                switch (res.type) {
-                    case 'movie':
-                        playObj.title = res.movie.title;
-                        playObj.quality = res.quality;
-                        playObj.imdb_id = res.movie.ids.imdb;
-                        playObj.poster = img.poster;
-                        playObj.backdrop = img.background;
-                        playObj.year = res.movie.year;
-
-                        sub_data.imdbid = res.movie.ids.imdb;
-                        break;
-                    case 'episode':
-                        playObj.title = res.show.title + ' - ' + i18n.__('Season %s', res.episode.season) + ', ' + i18n.__('Episode %s', res.episode.number) + ' - ' + res.episode.title;
-                        playObj.quality = res.quality;
-                        playObj.season = res.episode.season;
-                        playObj.episode = res.episode.number;
-                        playObj.poster = img.poster;
-                        playObj.backdrop = img.background;
-                        playObj.tvdb_id = res.show.ids.tvdb;
-                        playObj.imdb_id = res.show.ids.imdb;
-                        playObj.episode_id = res.episode.ids.tvdb;
-
-                        sub_data.imdbid = res.show.ids.imdb;
-                        sub_data.season = res.episode.season;
-                        sub_data.episode = res.episode.number;
-                        break;
-                    default:
-                        throw new Error('trakt.matcher.match failed');
-                }
-
-                playObj.metadataCheckRequired = true;
-                playObj.videoFile = file.path;
-
-                // try to get subtitles for that movie/episode
-                return getSubtitles(sub_data);
-            });
-
-        }).then(function (subtitles) {
-            var localsub = checkSubs();
-            if (localsub !== null) {
-                subtitles = jQuery.extend({}, subtitles, localsub);
-            }
-            playObj.subtitle = subtitles;
-
-            if (localsub !== null) {
-                playObj.defaultSubtitle = 'local';
-            } else {
-                playObj.defaultSubtitle = 'none';
-            }
-            resolve(playObj);
-        }).catch(function (err) {
-            win.warn('trakt.matcher.match error:', err);
-            var localsub = checkSubs();
-            if (localsub !== null) {
-                playObj.defaultSubtitle = 'local';
-            } else {
-                playObj.defaultSubtitle = 'none';
+    // try to figure out what movie/episode we're playing
+    Common.matchTorrent(path.basename(file.path))
+        .then(function (res) {
+            if (!res || res.error) {
+                throw new Error('matchTorrent failed');
             }
 
+            playObj.metadataCheckRequired = true;
+            playObj.videoFile = file.path;
+            switch (res.type) {
+            case 'movie':
+                playObj.title = res.movie.title;
+                playObj.quality = res.quality;
+                playObj.imdb_id = res.movie.imdbid;
+                playObj.poster = res.movie.poster;
+                playObj.year = res.movie.year;
+
+                sub_data.imdbid = res.movie.imdbid;
+                break;
+            case 'episode':
+                playObj.title = res.show.title + ' - ' + i18n.__('Season %s', res.show.episode.season) + ', ' + i18n.__('Episode %s', res.show.episode.episode) + ' - ' + res.show.episode.title;
+                playObj.quality = res.quality;
+                playObj.season = res.show.episode.season;
+                playObj.episode = res.show.episode.episode;
+                playObj.poster = res.show.poster;
+                playObj.tvdb_id = res.show.tvdbid;
+                playObj.imdb_id = res.show.imdbid;
+                playObj.episode_id = res.show.episode.tvdbid;
+
+                sub_data.imdbid = res.show.imdbid;
+                sub_data.season = res.show.episode.season;
+                sub_data.episode = res.show.episode.episode;
+                break;
+            default:
+            }
+
+            // try to get subtitles for that movie/episode
+            return getSubtitles(sub_data)
+                .then(function (subtitles) {
+                    var localsub = checkSubs();
+                    if (localsub !== null) {
+                        subtitles = jQuery.extend({}, subtitles, localsub);
+                    }
+                    playObj.subtitle = subtitles;
+
+                    if (localsub !== null) {
+                        playObj.defaultSubtitle = 'local';
+                    } else {
+                        playObj.defaultSubtitle = 'none';
+                    }
+                })
+                .catch(function (err) {
+                    playObj.defaultSubtitle = 'local';
+                    playObj.subtitle = checkSubs();
+                });
+        })
+        .catch(function (err) {
             if (!playObj.title) {
                 playObj.title = file.name;
             }
             playObj.quality = false;
             playObj.videoFile = file.path;
-            playObj.subtitle = localsub;
+            playObj.defaultSubtitle = 'local';
+            playObj.subtitle = checkSubs();
+        })
 
-            resolve(playObj);
-        });
-    }).then(function (play) {
+    // once we've checked everything, we start playing.
+    .finally(function () {
         $('.spinner').hide();
 
-        var localVideo = new Backbone.Model(play); // streamer model
-        console.debug('Trying to play local file', localVideo.get('src'), localVideo.attributes);
+        var localVideo = new Backbone.Model(playObj); // streamer model
+        win.debug('Trying to play local file', localVideo.get('src'), localVideo.attributes);
 
         var tmpPlayer = App.Device.Collection.selected.attributes.id;
         App.Device.Collection.setDevice('local');
@@ -588,13 +569,20 @@ var handleTorrent = function (torrent) {
 window.ondrop = function (e) {
     e.preventDefault();
     $('#drop-mask').hide();
-    console.debug('Drag completed');
+    win.debug('Drag completed');
     $('.drop-indicator').hide();
 
     var file = e.dataTransfer.files[0];
 
-    if (file != null && (file.name.indexOf('.torrent') !== -1 || file.name.indexOf('.srt') !== -1)) {
+    if (!file) {
+        var data = e.dataTransfer.getData('text/plain');
+        Settings.droppedMagnet = data;
+        handleTorrent(data);
+        return false;
+    }
 
+    if (file.name.indexOf('.torrent') !== -1 ||
+        file.name.indexOf('.srt') !== -1) {
         fs.writeFile(path.join(App.settings.tmpLocation, file.name), fs.readFileSync(file.path), function (err) {
             if (err) {
                 App.PlayerView.closePlayer();
@@ -609,15 +597,12 @@ window.ondrop = function (e) {
                 }
             }
         });
-
-    } else if (file != null && isVideo(file.name)) {
+    } else if (isVideo(file.name)) {
         handleVideoFile(file);
-    } else {
-        var data = e.dataTransfer.getData('text/plain');
-        Settings.droppedMagnet = data;
-        handleTorrent(data);
+        return false;
     }
 
+    console.error('could not handle', e);
     return false;
 };
 
@@ -630,16 +615,11 @@ $(document).on('paste', function (e) {
 
     var data = (e.originalEvent || e).clipboardData.getData('text/plain');
     e.preventDefault();
-
     Settings.droppedMagnet = data;
     handleTorrent(data);
     return true;
 });
 
-// nwjs sdk flavor has an invasive context menu
-$(document).on('contextmenu', function(e) {
-    e.preventDefault();
-});
 
 // Pass magnet link as last argument to start stream
 var last_arg = nw.App.argv.pop();

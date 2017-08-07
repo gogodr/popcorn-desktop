@@ -26,7 +26,7 @@ if (genre) {
         <div class="title"><%= title %></div>
 
         <div class="metadatas">
-            <div class="metaitem"><%= year %></div>
+            <div class="metaitem">Episode - <%= episode %></div>
             <div class="dot"></div>
             <div class="metaitem"><%= runtime %> min</div>
             <div class="dot"></div>
@@ -52,7 +52,7 @@ if (genre) {
                 </div>
                 <div class="number-container hidden"><%= rating %> <em>/10</em></div>
             </div>
-            <div data-toggle="tooltip" data-placement="left" title="<%=i18n.__("Health false") %>" class="fa fa-circle health-icon <%= health %>"></div>
+            <!--div data-toggle="tooltip" data-placement="left" title="<%=i18n.__("Health false") %>" class="fa fa-circle health-icon <%= health %>"></div-->
             <div data-toogle="tooltip" data-placement="left" title="<%=i18n.__("Magnet link") %>" class="fa fa-magnet magnet-link"></div>
 
         </div>
@@ -62,7 +62,7 @@ if (genre) {
 
     <div class="bottom-container">
 
-        <div class="favourites-toggle"><%=i18n.__("Add to bookmarks") %></div>
+        <!--div class="favourites-toggle"><%=i18n.__("Add to bookmarks") %></div-->
         <div class="watched-toggle"><%=i18n.__("Not Seen") %></div>
         <br>
 
@@ -74,15 +74,15 @@ if (genre) {
                 <div class="q720">720p</div>
                 <div class="q1080">1080p</div>
                 <div class="quality switch white">
-                    <input data-toogle="tooltip" data-placement="top" title="720p - <%= Common.fileSize(torrents['720p'].size) %><br>1080p - <%= Common.fileSize(torrents['1080p'].size) %>" type="radio" name="switch" id="switch-hd-off" >
-                    <input data-toogle="tooltip" data-placement="top" title="720p - <%= Common.fileSize(torrents['720p'].size) %><br>1080p - <%= Common.fileSize(torrents['1080p'].size) %>" type="radio" name="switch" id="switch-hd-on" checked >
+                    <input type="radio" name="switch" id="switch-hd-off" >
+                    <input type="radio" name="switch" id="switch-hd-on" checked >
                     <span class="toggle"></span>
                 </div>
             <% } else { %>
                 <% if (torrents["720p"] !== undefined) { %>
-                    <div data-toogle="tooltip" data-placement="top" title="<%= Common.fileSize(torrents['720p'].size) %>" class="q720">720p</div>
+                    <div class="q720">720p</div>
                 <% }else if (torrents["1080p"] !== undefined) { %>
-                    <div data-toogle="tooltip" data-placement="top" title="<%= Common.fileSize(torrents['1080p'].size) %>" class="q720">1080p</div>
+                    <div class="q720">1080p</div>
                 <% } else { %>HDRip<% } %>
             <% } %>
         </div>

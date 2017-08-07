@@ -64,7 +64,7 @@ const parsePlatforms = () => {
 // returns an array of paths with the node_modules to include in builds
 const parseReqDeps = () => {
     return new Promise((resolve, reject) => {
-        exec('npm ls --production=true --parseable=true', {maxBuffer: 1024 * 500}, (error, stdout, stderr) => {
+        exec('npm ls --production=true --parseable=true', { maxBuffer: 1024 * 500 }, (error, stdout, stderr) => {
             if (error || stderr) {
                 reject(error || stderr);
             } else {
@@ -140,7 +140,7 @@ gulp.task('run', () => {
             bin = path.join('cache', nwVersion + '-' + nwFlavor, platform);
 
         // path to nw binary
-        switch(platform.slice(0,3)) {
+        switch (platform.slice(0, 3)) {
             case 'osx':
                 bin += '/nwjs.app/Contents/MacOS/nwjs';
                 break;
@@ -209,18 +209,10 @@ gulp.task('default', () => {
 
 // download and compile nwjs
 gulp.task('nwjs', () => {
-    return parseReqDeps().then((requiredDeps) => {
-        // required files
-        nw.options.files = ['./src/**', '!./src/app/styl/**', './package.json', './README.md', './CHANGELOG.md', './LICENSE.txt', './.git.json'];
-        // add node_modules
-        nw.options.files = nw.options.files.concat(requiredDeps);
-        // remove junk files
-        nw.options.files = nw.options.files.concat(['!./node_modules/**/*.bin', '!./node_modules/**/*.c', '!./node_modules/**/*.h', '!./node_modules/**/Makefile', '!./node_modules/**/*.h', '!./**/test*/**', '!./**/doc*/**', '!./**/example*/**', '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**']);
 
-        return nw.build();
-    }).catch(function (error) {
-        console.error(error);
-    });
+    nw.options.files = ['./src/**', '!./src/app/styl/**', './package.json', './README.md', './CHANGELOG.md', './LICENSE.txt', './.git.json'];
+    nw.options.files = nw.options.files.concat(['!./node_modules/**/*.bin', '!./node_modules/**/*.c', '!./node_modules/**/*.h', '!./node_modules/**/Makefile', '!./node_modules/**/*.h', '!./**/test*/**', '!./**/doc*/**', '!./**/example*/**', '!./**/demo*/**', '!./**/bin/**', '!./**/build/**', '!./**/.*/**']);
+    return nw.build();
 });
 
 
@@ -423,8 +415,8 @@ gulp.task('compress', () => {
 });
 
 // prevent commiting if conditions aren't met and force beautify (bypass with `git commit -n`)
-gulp.task('pre-commit', ['jshint']);
-
+//gulp.task('pre-commit', ['jshint']);
+gulp.task('pre-commit', []);
 // check entire sources for potential coding issues (tweak in .jshintrc)
 gulp.task('jshint', () => {
     return gulp.src(['gulpfile.js', 'src/app/lib/*.js', 'src/app/lib/**/*.js', 'src/app/vendor/videojshooks.js', 'src/app/vendor/videojsplugins.js', 'src/app/*.js'])
@@ -436,8 +428,8 @@ gulp.task('jshint', () => {
 // beautify entire code (tweak in .jsbeautifyrc)
 gulp.task('jsbeautifier', () => {
     return gulp.src(['src/app/lib/*.js', 'src/app/lib/**/*.js', 'src/app/*.js', 'src/app/vendor/videojshooks.js', 'src/app/vendor/videojsplugins.js', '*.js', '*.json'], {
-            base: './'
-        })
+        base: './'
+    })
         .pipe(glp.jsbeautifier({
             config: '.jsbeautifyrc'
         }))

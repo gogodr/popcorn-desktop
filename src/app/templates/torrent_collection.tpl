@@ -3,6 +3,10 @@
     <div class="content">
 
         <div class="onlinesearch">
+            <div class="engine-selector">
+                <div id="rarbg-icon" data-id="RARBG" class="engine-icon"></div>
+                <div id="kat-icon" data-id="KAT" class="engine-icon"></div>
+            </div>
             <div class="dropdown online-categories">
                     <%
                         var arr_categories = ["Movies","TV Series","Anime"];
@@ -16,7 +20,7 @@
                 <div class="dropdown-arrow"></div>
             </div>
             <form id="online-form">
-                <input id="online-input" autocomplete="off" size="30" type="text" name="keyword" placeholder="<%= i18n.__('Search for torrent') %>">
+                <input id="online-input" autocomplete="off" size="30" type="text" name="keyword" placeholder="<%= i18n.__('Search on %s', Settings.onlineSearchEngine) %>">
                 <i class="fa fa-search online-search"></i>
             </form>
         </div>

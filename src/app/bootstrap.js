@@ -21,7 +21,7 @@
                 return null;
             }
 
-            win.info('loading local provider', file);
+            console.log('loading local provider', file);
 
             var q = Q.defer();
 
@@ -32,7 +32,7 @@
             script.src = 'lib/providers/' + file;
 
             script.onload = function () {
-                win.info('loaded', file);
+                console.log('loaded', file);
                 q.resolve(file);
             };
 
@@ -58,7 +58,7 @@
         });
 
         return packages.map(function (name) {
-            win.info('loading npm', regex, name);
+            console.log('loading npm', regex, name);
             return loadFromNPM(name, fn);
         });
     }
@@ -68,8 +68,9 @@
     }
 
     function loadNpmSettings() {
+        //https://github.com/popcorn-official/butter-settings-popcorn/blob/master/index.js
         return Q.all(loadFromPackageJSON(/butter-settings-/, function (settings) {
-            Settings = _.extend(Settings, settings);
+            Settings = _.extend(Settings, settings,{projectName:'Kawaii Time'});
         }));
     }
 
@@ -104,7 +105,7 @@
             return providers;
         })
         .then(function (providers) {
-            win.info('loaded', providers);
+            console.log('loaded', providers);
         });
 
 })(window.App);
