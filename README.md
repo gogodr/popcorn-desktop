@@ -3,7 +3,7 @@
 Allow any user to easily watch anime through torrent streaming, without any prerequisites.
 
 ***
-This proyect is based on Popcorn Time's Desktop App.
+This project is based on Popcorn Time's Desktop App.
 ***
 
 ## Screenshots
