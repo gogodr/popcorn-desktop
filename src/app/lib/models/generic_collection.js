@@ -125,21 +125,23 @@
                     switch (providerName) {
                         case "AnimeApi":
                             return new Promise((resolve, reject) => {
-                                resolve([{
-                                    _id: "centaur-no-nayami",
-                                    images: {
-                                        banner: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                        fanart: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                        poster: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg"
-                                    },
-                                    provider: "horriblesubsApi",
-                                    slug: 'centaur-no-nayami',
-                                    title: "Centaur no Nayami",
-                                    genres: ["Slice of Life", "Comedy"],
-                                    description: "Himeno is a sweet, shy little centaur girl. In her world, everyone seems to be a supernatural creature, and all her classmates have some kind of horns, wings, tails, halos, or other visible supernatural body part. Despite their supernatural elements, Himeno and her best friends, Nozomi and Kyouko, have a fun and mostly normal daily school life!",
-                                    type: "show",
-                                    year: "2017"
-                                }]);
+                                horriblesubsAnimeSeasonList().then(() => {
+                                    resolve([{
+                                        _id: "centaur-no-nayami",
+                                        images: {
+                                            banner: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                            fanart: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
+                                            poster: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg"
+                                        },
+                                        provider: "horriblesubsApi",
+                                        slug: 'centaur-no-nayami',
+                                        title: "Centaur no Nayami",
+                                        genres: ["Slice of Life", "Comedy"],
+                                        description: "Himeno is a sweet, shy little centaur girl. In her world, everyone seems to be a supernatural creature, and all her classmates have some kind of horns, wings, tails, halos, or other visible supernatural body part. Despite their supernatural elements, Himeno and her best friends, Nozomi and Kyouko, have a fun and mostly normal daily school life!",
+                                        type: "show",
+                                        year: "2017"
+                                    }]);
+                                });
                             }).then((torrents) => {
                                 console.log("Trigger get anime");
                                 self.add(torrents);

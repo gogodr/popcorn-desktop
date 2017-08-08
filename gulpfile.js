@@ -427,7 +427,7 @@ gulp.task('jshint', () => {
 
 // beautify entire code (tweak in .jsbeautifyrc)
 gulp.task('jsbeautifier', () => {
-    return gulp.src(['src/app/lib/*.js', 'src/app/lib/**/*.js', 'src/app/*.js', 'src/app/vendor/videojshooks.js', 'src/app/vendor/videojsplugins.js', '*.js', '*.json'], {
+    return gulp.src(['src/app/lib/*.js', 'src/app/lib/**/*.js', 'src/app/lib/**/**/*.js', 'src/app/*.js', 'src/app/vendor/videojshooks.js', 'src/app/vendor/videojsplugins.js', '*.js', '*.json'], {
         base: './'
     })
         .pipe(glp.jsbeautifier({
