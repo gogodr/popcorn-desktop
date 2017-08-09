@@ -154,8 +154,8 @@
                 return;
             }
 
-            $('.movie-imdb-link, .rating-container, .magnet-link, .health-icon').hide();
-            $('.dot').css('opacity', 0);
+            //$('.movie-imdb-link, .rating-container, .magnet-link, .health-icon').hide();
+            //$('.dot').css('opacity', 0);
         },
 
         onDestroy: function () {

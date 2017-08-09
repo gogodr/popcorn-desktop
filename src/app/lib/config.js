@@ -221,9 +221,9 @@
                     tooltip:auxTt
                 };
             }), function (p) {
-                console.log('Tab', p.name)
                 //return p.name ? true : false
-                return (p.name == 'Releases' || p.name == 'Season') ? true : false;
+                //return (p.name == 'Releases' || p.name == 'Season') ? true : false;
+                return (p.name == 'Releases') ? true : false;
             }), 'order');
         },
 

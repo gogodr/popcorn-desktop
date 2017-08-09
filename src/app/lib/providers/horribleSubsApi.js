@@ -1,7 +1,6 @@
 (function (App) {
     'use strict';
     var http = require('http');
-    var himalaya = require('himalaya');
     var cheerio = require('cheerio');
 
     var HorribleSubsApi = function () {
@@ -75,7 +74,20 @@
                             animes[animeIndex][item.resolution] = item.link;
                         }
                     });
-                    return resolve(animes);
+
+                    let getAnimeTasks = [];
+                    animes.forEach((item) => {
+                        getAnimeTasks.push(App.Providers.AnilistApi.searchAnime(item.anime));
+                    });
+                    Q.all(getAnimeTasks).then((fullInfoAnimes) => {
+                        console.log("fullInfoAnimes", fullInfoAnimes);
+                        var animesFullInfo = [];
+                        animes = animes.map((item, k) => {
+                            return Object.assign({}, item, fullInfoAnimes[k]);
+                        });
+                        console.log("animes", animes);
+                        return resolve(animes);
+                    });
                 });
                 res.on('error', (e) => {
                     return reject(e);
@@ -93,13 +105,12 @@
                 });
                 res.on('end', () => {
                     const $ = cheerio.load(body);
-                    console.log("Season Animes", $('.shows-wrapper')[0].children.filter((item) => {
+                    const list = $('.shows-wrapper')[0].children.filter((item) => {
                         return item.children ? true : false;
                     }).map((item) => {
                         return item.children[0].attribs;
-                    }));
-                    //var json = himalaya.parse(body);
-                    let itemList = [];
+                    });
+                    return resolve(list);
                 });
                 res.on('error', (e) => {
                     return reject(e);

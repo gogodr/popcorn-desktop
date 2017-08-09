@@ -85,7 +85,7 @@
             options.filter = options.filter || new App.Model.Filter();
 
             this.filter = _.defaults(_.clone(options.filter.attributes), {
-                page: 1
+                page: 0
             });
             this.hasMore = true;
 
@@ -125,7 +125,7 @@
                     switch (providerName) {
                         case "AnimeApi":
                             return new Promise((resolve, reject) => {
-                                horriblesubsAnimeSeasonList().then(() => {
+                                App.Providers.HorribleSubsApi.getAnimeSeasonList().then(() => {
                                     resolve([{
                                         _id: "centaur-no-nayami",
                                         images: {
@@ -152,42 +152,59 @@
                             });;
                         case "MovieApi":
                             return new Promise((resolve, reject) => {
-                                resolve([{
-                                    backdrop: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                    cover: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                    certification: "R",
-                                    images: {
-                                        banner: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                        fanart: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg",
-                                        poster: "http://horriblesubs.info/wp-content/uploads/2017/07/centaur.jpg"
-                                    },
-                                    provider: "horriblesubsApi",
-                                    slug: 'centaur-no-nayami-1',
-                                    title: "Centaur no Nayami",
-                                    genre: ["Slice of Life", "Comedy"],
-                                    description: "Himeno is a sweet, shy little centaur girl. In her world, everyone seems to be a supernatural creature, and all her classmates have some kind of horns, wings, tails, halos, or other visible supernatural body part. Despite their supernatural elements, Himeno and her best friends, Nozomi and Kyouko, have a fun and mostly normal daily school life!",
-                                    type: "movie",
-                                    year: "2017",
-                                    episode: 1,
-                                    torrents: {
-                                        "720p": {
-                                            peers: 0,
-                                            seeds: 0,
-                                            provider: "HorribleSubs",
-                                            url: "magnet:?xt=urn:btih:LCNTKNASRF3IVRQF2CRXKLAMMQYL7RJR&tr=http://nyaa.tracker.wf:7777/announce&tr=udp://tracker.coppersurfer.tk:6969/announce&tr=udp://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.leechers-paradise.org:6969/announce&tr=http://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.opentrackr.org:1337/announce&tr=http://tracker.opentrackr.org:1337/announce&tr=udp://tracker.zer0day.to:1337/announce&tr=http://explodie.org:6969/announce&tr=http://p4p.arenabg.com:1337/announce&tr=udp://p4p.arenabg.com:1337/announce&tr=http://mgtracker.org:6969/announce&tr=udp://mgtracker.org:6969/announce"
-                                        },
-                                        "1080p": {
-                                            peers: 0,
-                                            seeds: 0,
-                                            provider: "HorribleSubs",
-                                            url: "magnet:?xt=urn:btih:BKXDCPINBFWD3TIKMJFYS3T63TDMZLDJ&tr=http://nyaa.tracker.wf:7777/announce&tr=udp://tracker.coppersurfer.tk:6969/announce&tr=udp://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.leechers-paradise.org:6969/announce&tr=http://tracker.internetwarriors.net:1337/announce&tr=udp://tracker.opentrackr.org:1337/announce&tr=http://tracker.opentrackr.org:1337/announce&tr=udp://tracker.zer0day.to:1337/announce&tr=http://explodie.org:6969/announce&tr=http://p4p.arenabg.com:1337/announce&tr=udp://p4p.arenabg.com:1337/announce&tr=http://mgtracker.org:6969/announce&tr=udp://mgtracker.org:6969/announce"
+                                console.log("FETCH PAGE", self.filter.page);
+                                App.Providers.HorribleSubsApi.getFeed(self.filter.page).then((animes) => {
+                                    resolve(animes.map(item => {
+                                        let torrents = {};
+                                        if (item['480p']) {
+                                            torrents['480p'] = {
+                                                peers: 0,
+                                                seeds: 0,
+                                                provider: "HorribleSubs",
+                                                url: item['480p']
+                                            };
                                         }
-                                    }
-                                }]);
+                                        if (item['720p']) {
+                                            torrents['720p'] = {
+                                                peers: 0,
+                                                seeds: 0,
+                                                provider: "HorribleSubs",
+                                                url: item['720p']
+                                            };
+                                        }
+                                        if (item['1080p']) {
+                                            torrents['1080p'] = {
+                                                peers: 0,
+                                                seeds: 0,
+                                                provider: "HorribleSubs",
+                                                url: item['1080p']
+                                            };
+                                        }
+                                        return {
+                                            backdrop: item.image,
+                                            cover: item.image,
+                                            certification: 'R',
+                                            images: {
+                                                banner: item.image,
+                                                fantart: item.image,
+                                                poster: item.image
+                                            },
+                                            provider: 'horriblesubsApi',
+                                            slug: `${item.title} ${item.episode}`.replace(' ', '-'),
+                                            title: item.title ? item.title : item.key,
+                                            genre: item.genres,
+                                            description: item.description,
+                                            type: 'movie',
+                                            year: (new Date()).getFullYear(),
+                                            episode: parseInt(item.episode),
+                                            torrents: torrents
+                                        }
+                                    }));
+                                });
                             }).then((torrents) => {
                                 console.log("Trigger get anime");
                                 self.add(torrents);
-                                self.hasMore = false;
+                                self.hasMore = true;
                                 self.trigger('sync', self);
                             }).catch(function (err) {
                                 console.error('provider error err', err);

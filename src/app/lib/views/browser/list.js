@@ -310,7 +310,8 @@
             case 'anime':
                 $('#load-more-item').remove();
                 // we add a load more
-                if (this.collection.hasMore && !this.collection.filter.keywords && this.collection.state !== 'error' && this.collection.length !== 0 && this.collection.length >= maxResults) {
+                console.log("LOAD MORE THING");
+                if (this.collection.hasMore && this.collection.state !== 'error' && this.collection.length !== 0) {
                     $('.items').append('<div id="load-more-item" class="load-more"><span class="status-loadmore">' + i18n.__('Load More') + '</span><div id="loading-more-animi" class="loading-container"><div class="ball"></div><div class="ball1"></div></div></div>');
 
                     $('#load-more-item').click(function () {
