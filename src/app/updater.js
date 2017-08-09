@@ -172,7 +172,7 @@
                     });
                     win.close(true);
                 };
-
+                /*
                 App.vent.trigger('notification:show', new App.Model.Notification({
                     title: 'Update ' + (updateData.version || 'Hotfix') + ' Installed',
                     body: (updateData.description || 'Auto update'),
@@ -182,7 +182,7 @@
                         title: 'Update Now',
                         action: startWinUpdate
                     }]
-                }));
+                }));*/
                 win.on('close', function () {
                     startWinUpdate();
                 });
@@ -227,12 +227,13 @@
                                 defer.reject(err);
                             })
                             .on('end', function () {
+                                /*
                                 App.vent.trigger('notification:show', new App.Model.Notification({
                                     title: 'Update ' + (updateData.version || 'Hotfix') + ' Installed',
                                     body: (updateData.description || 'Auto update'),
                                     showRestart: true,
                                     type: 'info'
-                                }));
+                                }));*/
 
                                 win.debug('Extraction success!');
                             });
@@ -285,7 +286,7 @@
             });
             $changelog.show();
         }
-
+        /*
         App.vent.trigger('notification:show', new App.Model.Notification({
             title: this.updateData.title + ' Installed',
             body: this.updateData.description,
@@ -295,7 +296,7 @@
                 title: 'Changelog',
                 action: onChangelogClick
             }]
-        }));
+        }));*/
     };
 
     Updater.prototype.update = function () {
